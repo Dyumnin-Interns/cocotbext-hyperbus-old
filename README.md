@@ -1,7 +1,7 @@
 
 # Hyperbus interface modules for Cocotb
 
-Github repository: https://github.com/Dyumnin-Interns/cocotbext-hyperbus
+GitHub repository: https://github.com/Dyumnin-Interns/cocotbext-hyperbus
 
 
 
@@ -23,7 +23,7 @@ Install....
     
 ## Documentation
 `HyperBusMaster`, `HyperBusAddressMap`, `HyperBusTransactionGenerator` classes implement HyperBus master model.
-### HyperBusMaster Model:
+### HyperBusMaster Model
 A HyperBus master plays a crucial role in initiating and managing data transfers on the HyperBus. It acts as   the brain of the HyperBus communication, managing the exchange of data between itself and HyperBus slaves (e.g., HyperFlash memory)
 
 This model represents the following functionalities:
