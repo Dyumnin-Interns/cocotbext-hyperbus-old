@@ -148,6 +148,22 @@ Termination:
 * Continuous data transfer: Slave must accept a continuous burst of write data or the master must limit the burst length.
 
 
+### HyperBusSlave Model
+The HyperBus slave model is responsible for responding to commands and facilitating data exchange on the bus. It plays a critical role in ensuring accurate and efficient communication within the system.
+
+Functionalities of the model include:
+* Receive HyperBus commands and data
+* Respond to read and write requests
+* Handle address decoding and data storage
+* Report errors to the master
+
+To use the module, import the class:
+```bash
+from hyperbus_model import HyperbusSlave
+
+slave_model=HyperbusSlave(clk, hb_cs, hb_ca, hb_rw, hb_rd_data, hb_wr_data, memory)
+```
+
 
 
 
