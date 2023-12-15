@@ -164,7 +164,55 @@ from hyperbus_model import HyperbusSlave
 slave_model=HyperbusSlave(clk, hb_cs, hb_ca, hb_rw, hb_rd_data, hb_wr_data, memory)
 ```
 
+The HyperbusSlave model defines a asyn function `handle_transaction` that waits for the rising edge on clock,
+-CS is asserted low, indicating transaction start.
+```bash
+async def handle_transaction():
+    await RisingEdge(clk)
+       If cs.value !=0:  #chip select assertion check
+         break
+```
 
+A `decode_command` is defined to decode the CA words-command type(read/write), address space(memory/register),burst type(wrapped/linear),latency count.
+```bash
+def decode_command():
+    command = hb_ca[0].value #using the ca bit assignment logic for(read/write/address space/burst type/latency)
+    address = hb_ca[1].value <<8 | hb_ca[2].value
+    latency = hb_ca[3].value
+```
+
+The `process_latency` function uses latency information from CA words and waits for the required number of clock cycles based on latency.
+```bash
+async def process_latency(latency):
+   for _in range(latency);
+        await RisingEdge(clk)
+```
+
+`read_data` and `write_data` functions receives address as input.
+`read_data` checks if the address exits in the memory dictionary. If exists:
+
+-read data from memory location.
+
+-apply RDWS mask to write data
+
+-send data to output signals
+
+-if address is invalid, set all data outputs to 0 to indicate an error.
+
+`write_data` writes data to memory location based on address, considering burst transfers.
+
+
+#### Signal Parameters:
+Master Outputs, Slave Inputs:
+* CS#: Chip Select- Initiates and terminates bus transactions. High to Low activates, Low to High deactivates.
+* CK, CK#:    Differential clock signals for data transfer synchronization.
+* DQ[7:0]:      Data input/output for command, address, and data information.
+* RWDS:       Read/Write data strobe, indicates additional latency or data mask.
+* RESET#:    Resets DQ signals to High-Z state when Low.
+
+Slave Outputs, Master Inputs:
+* RSTO# (Open Drain):   Indicates Power-On-Reset (POR) in the slave device.
+* INT# (Open Drain):       Indicates an internal event in the slave device.
 
 
 
