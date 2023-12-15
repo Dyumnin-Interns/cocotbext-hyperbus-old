@@ -204,15 +204,15 @@ async def process_latency(latency):
 
 #### Signal Parameters:
 Master Outputs, Slave Inputs:
-* CS#: Chip Select- Initiates and terminates bus transactions. High to Low activates, Low to High deactivates.
-* CK, CK#:    Differential clock signals for data transfer synchronization.
-* DQ[7:0]:      Data input/output for command, address, and data information.
-* RWDS:       Read/Write data strobe, indicates additional latency or data mask.
-* RESET#:    Resets DQ signals to High-Z state when Low.
+* `CS#`: Chip Select- Initiates and terminates bus transactions. High to Low activates, Low to High deactivates.
+* `CK, CK#`:    Differential clock signals for data transfer synchronization.
+* `DQ[7:0]`:      Data input/output for command, address, and data information.
+* `RWDS`:       Read/Write data strobe, indicates additional latency or data mask.
+* `RESET#`:    Resets DQ signals to High-Z state when Low.
 
 Slave Outputs, Master Inputs:
-* RSTO# (Open Drain):   Indicates Power-On-Reset (POR) in the slave device.
-* INT# (Open Drain):       Indicates an internal event in the slave device.
+* `RSTO#` (Open Drain):   Indicates Power-On-Reset (POR) in the slave device.
+* `INT#` (Open Drain):       Indicates an internal event in the slave device.
 
 
 
