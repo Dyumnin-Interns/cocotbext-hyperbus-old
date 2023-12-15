@@ -102,17 +102,21 @@ Bit 2-0 -Address(word within half-page) – (A2-A0) 16 bytes
 * HyperBusMaster drives CS# low while clock is idle.
 * Clock starts toggling while CommandAddress (CA) words are transferred.
 * CA0 indicates read transaction-CA[47] = 1, memory space-CA[46] = 0, and burst type- CA[45].
+
 Burst types-
  Wrapped bursts wrap within the burst length whereas linear bursts output data sequentially across row boundaries.
 * CA1 and CA2 provide row/column address and target word address.
 * Master starts driving CS# low only after satisfying Read-Write-Recovery time (tRWR).
+
 Latency:
 * Master clocks for a number of cycles defined by the latency count setting.
 * RWDS signal determines additional latency based on its value during CA cycles.
+
 Data Transfer:
 * RWDS transitions and data output occur simultaneously after latency cycles.
 * New data is output edge-aligned with every RWDS transition.
 * RWDS may go low between words for latency insertion or error indication.
+
 Termination:
 * Read transfer ends by driving CS# high when the clock is idle.
 * Clock can be idle while CS# is high.
@@ -124,9 +128,11 @@ Termination:
 * CA0 indicates CA[47]=0-write transaction and CA[46]=0-memory space CA[45]-Burst type
 * CA1 and CA2 provide row/column address and target word address.
 * Master starts driving CS# low only after satisfying Read-Write-Recovery time (tRWR).
+
 Latency:
 * Master clocks for a number of cycles defined by the latency count setting.
 * RWDS signal during CA cycles may determine additional latency (device dependent).
+
 Data Transfer:
 * Master starts outputting write data after latency cycles.
 * Write data is center-aligned with clock edges (first byte captured on rising edge, second on falling edge).
@@ -134,6 +140,7 @@ Data Transfer:
 * Data is written to the array only when RWDS is Low.
 * Master cannot indicate a need for latency within the write data transfer portion.
 * Slave must be able to accept a continuous burst of write data or have a limit on the acceptable burst length (device dependent).
+
 Termination:
 * Write transfer ends by driving CS# high when the clock is idle.
 * Some devices may not support wrapped write transactions.
