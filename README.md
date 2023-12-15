@@ -169,7 +169,7 @@ The HyperbusSlave model defines a asyn function `handle_transaction` that waits 
 ```bash
 async def handle_transaction():
     await RisingEdge(clk)
-       If cs.value !=0:  #chip select assertion check
+       If cs.value != 0:  #chip select assertion check
          break
 ```
 
@@ -177,14 +177,14 @@ A `decode_command` is defined to decode the CA words-command type(read/write), a
 ```bash
 def decode_command():
     command = hb_ca[0].value #using the ca bit assignment logic for(read/write/address space/burst type/latency)
-    address = hb_ca[1].value <<8 | hb_ca[2].value
+    address = hb_ca[1].value << 8 | hb_ca[2].value
     latency = hb_ca[3].value
 ```
 
 The `process_latency` function uses latency information from CA words and waits for the required number of clock cycles based on latency.
 ```bash
 async def process_latency(latency):
-   for _in range(latency);
+   for _in range(latency)
         await RisingEdge(clk)
 ```
 
