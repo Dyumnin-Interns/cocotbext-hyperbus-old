@@ -18,7 +18,7 @@ GitHub repository: https://github.com/Dyumnin-Interns/cocotbext-hyperbus
 Install....
 
 ```bash
-  pip 
+  pip  install cocotbext-hyperbus
 ```
     
 ## Documentation
@@ -35,34 +35,61 @@ This model represents the following functionalities:
 To use the module, import the classes:
 
 ```bash
-from hyperbus_model import HyperbusMaster, HyperbusAddressMap, HyperBusTransactionGenerator
+from cocotbrxt.hyperbus import HyperbusMaster,  HyperBusTransactionGenerator
+from cocotbext.axi import ...
+
+signals=cs, rwdq dq,clk clk#
+hy1_cs, hy1_rwdq hy1_dq,hy1_clk hy1_clk#
+hy2_cs, hy2_rwdq hy2_dq,hy2_clk hy2_clk#
+cfg=HyperbusCfg(burst=False)
+cfg.burst=False
+hmas=HyperbusMaster(dut,prefix="hy1",config=cfg)
+cfg.burst=True
+cfg.burstlength=random.choice(1,23,3)
+hmas.configure(cfg)
+
+address = 0x1000
+data=b'This is a data string I am sending over hyperbus;'
+data=[0x00, 0x100,0xfa99]
+data=readmem(memfile)
+hmas.write(address,data,burst=False,reg=True)
+irdata=hmas.read(address,length=len(data),burst=False,reg=True)
+assert irdata=data,"datamismatch"
+cover(burstlen)
+
+someClass=SomeClass()
+slv=HyperbusSlave(dut,prefix,target=someClass)
+
 
 master_model = HyperbusMaster(clk, hb_cmd, hb_addr, hb_wr_data, hb_rd_data, hb_rw, hb_cs, hb_ca)
 ```
 
 #### Signals:
-* `hb_cmd` -hyberbus command signal used to indicate type of burst transaction: Burst_read or Burst_write
-* `hb_addr` -sets to the desired address
-* `hb_cs`    -sets to the value 0 to activate the selected slave device
-* `hb_cs`    -sets value back to 1 to deactivate the slave device
-* `hb_rw`   -sets to 1 to indicate a read operation
-* `hb_rw`- sets to 0 to indicate a write operation
-* `hb_wr_data` - sets the value of the data to be written
-* `hb_rd_data` -reads data value and stores in the data variable
-* `write_data` - waits for rising edge on  clock to confirm write completion
-* `read_data` -waits for rising edge on clock to receive the read data
-* `latency` -Initial latency value to be applied before every transaction.
-* `Burst_length` -specifies the total number of transfers in the burst transaction.
-* `Burst_increment` -specifies the amount by which the address is incremented after each transfer in the burst
+* onWrite/Read
+	* `hb_cmd` -hyberbus command signal used to indicate type of burst transaction: Burst_read or Burst_write
+	* `hb_rw`   -sets to 1 to indicate a read operation
+	* `hb_rw`- sets to 0 to indicate a write operation
+	* `hb_wr_data` - sets the value of the data to be written
+	* `hb_rd_data` -reads data value and stores in the data variable
+	* `write_data` - waits for rising edge on  clock to confirm write completion
+	* `read_data` -waits for rising edge on clock to receive the read data
+	* `hb_addr` -sets to the desired address
+* Not exposed to user
+	* `hb_cs`    -sets to the value 0 to activate the selected slave device
+	* `hb_cs`    -sets value back to 1 to deactivate the slave device
+* As CFG class
+	* `latency` -Initial latency value to be applied before every transaction.
+	* `Burst_length` -specifies the total number of transfers in the burst transaction.
+	* `Burst_increment` -specifies the amount by which the address is incremented after each transfer in the burst
 
 `read_data` and `write_data` perform read and write operations on the hyperbusmaster.
 ```bash
 await master_model.initialize() #for verification
      #read and write transactions
-     read_data = await master_model.read_data(0x1000)  #read data from address 0x1000
-     await master_model.write_data(0x1000, 0xabcdabcd)  #write data 0xabcdabcd to address 0x1000
+     read_data = await master_model.read(0x1000,length,reg=False)  #read data from address 0x1000
+     await master_model.write_data(0x1000, 0xabcdabcd,reg=False)  #write data 0xabcdabcd to address 0x1000
 ```
-#### HyperBusAddressMap
+#### HyperBusAddressMap Reuse from axi
 This class manages the mapping between logical and physical addresses used by the HyperBus master.
 ```bash
 class HyperbusAddressMap:
