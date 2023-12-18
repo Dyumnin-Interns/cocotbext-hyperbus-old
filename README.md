@@ -15,11 +15,19 @@ GitHub repository: https://github.com/Dyumnin-Interns/cocotbext-hyperbus
 
 ## Installation
 
-Install....
+Installation from pip (release version, stable):
 
-```bash
-  pip  install cocotbext-hyperbus
-```
+    $ pip install cocotbext-hyperbus
+    
+Installation from git (latest development version, potentially unstable):
+
+    $ pip install https://github.com/Dyumnin-Interns/cocotbext-hyperbus/archive/master.zip
+
+Installation for active development:
+
+    $ git clone https://github.com/Dyumnin-Interns/cocotbext-hyperbus
+    $ pip install -e cocotbext-hyperbus
+
     
 ## Documentation
 `HyperBusMaster`, `HyperBusAddressMap`, `HyperBusTransactionGenerator` classes implement HyperBus master model.
@@ -36,7 +44,7 @@ To use the module, import the classes:
 
 ```bash
 from cocotbrxt.hyperbus import HyperbusMaster,  HyperBusTransactionGenerator
-from cocotbext.axi import ...
+from cocotbext.axi import HyperBusAddressMap
 
 signals=cs, rwdq dq,clk clk#
 hy1_cs, hy1_rwdq hy1_dq,hy1_clk hy1_clk#
