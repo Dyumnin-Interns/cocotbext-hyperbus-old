@@ -21,9 +21,18 @@ class HyperbusAddressMap(BusDriver):
     def _init_(self):
         pass
         '''
-        define mapping between logical and physical address     
+        Defines mapping between logical and physical address     
         '''
+    def translate_logical_address(self, address):
+        return ...
+        
 
 class HyperbusTransactionGenerator(BusDriver):
-    def 
+    def __init__(self):
+        self.commands = [...]
+
+    def generate_next_transaction(self):
+        '''
+        Generate random transaction with command, address, and data (write)
+        '''
 
