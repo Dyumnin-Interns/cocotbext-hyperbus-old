@@ -15,7 +15,7 @@ class HyperbusMaster(BusDriver):
     address: The target address on the Hyperbus.
     data: The byte string or bytearray containing the data to be written. It must be an even
          multiple of 4 bytes in length, representing 32-bit data elements.
-  Raises:
+  Rrturns:
     TypeError: If the data is not of type bytes or bytearray.
     ValueError: If the data length is not an even multiple of 4 bytes.
   '''
@@ -25,11 +25,30 @@ class HyperbusMaster(BusDriver):
  
       if len(data) % 4 != 0:
       raise ValueError("Data length must be an even multiple of 4 bytes.")
+       
         pass
+
+    def read(self, address, length):
+        '''
+        Reads data from the specified Hyperbus address.
+    Parameters:
+            address: The target address to read from.
+            length:  The number of bytes to read.
+    Returns:
+            The read data as a byte string.
+         '''
+        
+        pass
+
     
     def _calc_burst(data):
         burst_length = data // 32
         return burst_length if burst_length > 0 else 1
+
+   def _cs_control(self, bool = False):
+  '''
+  Drives the CS# signal high or low.
+  '''
 
 class HyperbusAddressMap(BusDriver):
     def _init_(self):
