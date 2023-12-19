@@ -37,7 +37,12 @@ class HyperbusMaster(BusDriver):
     Returns:
             The read data as a byte string.
          '''
+
+      read_data = self._read_data(address, length)
+      expected_data = ...
         
+        if read_data != expected_data:
+        raise Exception(f"Data mismatch")
         pass
 
     
