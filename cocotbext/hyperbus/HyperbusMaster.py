@@ -8,10 +8,18 @@ class HyperbusMaster(BusDriver):
     def __init__(self,...):
         pass
     def write(self,address,data):
-        '''
-        Description of what the function does.
-        description of each parameter.
-        '''
+      '''
+  Writes a byte string of 32-bit data to a specified Hyperbus address.
+
+  Parameters:
+    address: The target address on the Hyperbus.
+    data: The byte string or bytearray containing the data to be written. It must be an even
+         multiple of 4 bytes in length, representing 32-bit data elements.
+  Raises:
+    TypeError: If the data is not of type bytes or bytearray.
+    ValueError: If the data length is not an even multiple of 4 bytes.
+  '''
+        
         pass
     def _calc_burst(data):
         burst_length = data // 32
