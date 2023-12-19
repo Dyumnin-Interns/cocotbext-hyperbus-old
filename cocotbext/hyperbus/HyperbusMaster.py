@@ -21,12 +21,14 @@ class HyperbusMaster(BusDriver):
   '''
         if not isinstance(data, (bytes, bytearray)):
           raise TypeError("Data must be of type bytes or bytearray.")
+     
+        if len(data) % 4 != 0:
+            raise ValueError("Data length must be an even multiple of 4 bytes.")
 
- 
-      if len(data) % 4 != 0:
-      raise ValueError("Data length must be an even multiple of 4 bytes.")
-       
-        pass
+        if burst:
+            burst_length = self._calc_burst(data)
+        else:
+           
 
     def read(self, address, length):
         '''
@@ -37,9 +39,6 @@ class HyperbusMaster(BusDriver):
     Returns:
             The read data as a byte string.
          '''
-
-      read_data = self._read_data(address, length)
-      expected_data = ...
         
         if read_data != expected_data:
         raise Exception(f"Data mismatch")
