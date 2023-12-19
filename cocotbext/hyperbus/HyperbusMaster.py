@@ -19,8 +19,14 @@ class HyperbusMaster(BusDriver):
     TypeError: If the data is not of type bytes or bytearray.
     ValueError: If the data length is not an even multiple of 4 bytes.
   '''
-        
+        if not isinstance(data, (bytes, bytearray)):
+          raise TypeError("Data must be of type bytes or bytearray.")
+
+ 
+      if len(data) % 4 != 0:
+      raise ValueError("Data length must be an even multiple of 4 bytes.")
         pass
+    
     def _calc_burst(data):
         burst_length = data // 32
         return burst_length if burst_length > 0 else 1
