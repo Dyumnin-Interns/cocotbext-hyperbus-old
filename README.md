@@ -44,11 +44,10 @@ To use the module, import the classes:
 
 ```bash
 from cocotbrxt.hyperbus import HyperbusMaster,  HyperBusTransactionGenerator
-from cocotbext.axi import HyperBusAddressMap
+from cocotbext.axi import AdressSpace
 
 signals=cs, rwdq dq,clk clk#
-hy1_cs, hy1_rwdq hy1_dq,hy1_clk hy1_clk#
-hy2_cs, hy2_rwdq hy2_dq,hy2_clk hy2_clk#
+
 cfg=HyperbusCfg(burst=False)
 cfg.burst=False
 hmas=HyperbusMaster(dut,prefix="hy1",config=cfg)
