@@ -30,7 +30,7 @@ Installation for active development:
 
     
 ## Documentation
-`HyperBusMaster`, `HyperBusAddressMap`, `HyperBusTransactionGenerator` classes implement HyperBus master model.
+`HyperBusMaster`, `AddressSpace`, `HyperBusTransactionGenerator` classes implement HyperBus master model.
 ### HyperBusMaster Model
 A HyperBus master plays a crucial role in initiating and managing data transfers on the HyperBus. It acts as   the brain of the HyperBus communication, managing the exchange of data between itself and HyperBus slaves (e.g., HyperFlash memory)
 
@@ -46,68 +46,35 @@ To use the module, import the classes:
 from cocotbrxt.hyperbus import HyperbusMaster,  HyperBusTransactionGenerator
 from cocotbext.axi import AdressSpace
 
-signals=cs, rwdq dq,clk clk#
 
-cfg=HyperbusCfg(burst=False)
-cfg.burst=False
-hmas=HyperbusMaster(dut,prefix="hy1",config=cfg)
-cfg.burst=True
-cfg.burstlength=random.choice(1,23,3)
-hmas.configure(cfg)
+h_mas=HyperbusMaster(dut.clk, dut.rst, prefix)
 
-address = 0x1000
-data=b'This is a data string I am sending over hyperbus;'
-data=[0x00, 0x100,0xfa99]
-data=readmem(memfile)
-hmas.write(address,data,burst=False,reg=True)
-irdata=hmas.read(address,length=len(data),burst=False,reg=True)
-assert irdata=data,"datamismatch"
-cover(burstlen)
-
-someClass=SomeClass()
-slv=HyperbusSlave(dut,prefix,target=someClass)
-
-
-master_model = HyperbusMaster(clk, hb_cmd, hb_addr, hb_wr_data, hb_rd_data, hb_rw, hb_cs, hb_ca)
 ```
 
-#### Signals:
-* onWrite/Read
-	* `hb_cmd` -hyberbus command signal used to indicate type of burst transaction: Burst_read or Burst_write
-	* `hb_rw`   -sets to 1 to indicate a read operation
-	* `hb_rw`- sets to 0 to indicate a write operation
-	* `hb_wr_data` - sets the value of the data to be written
-	* `hb_rd_data` -reads data value and stores in the data variable
-	* `write_data` - waits for rising edge on  clock to confirm write completion
-	* `read_data` -waits for rising edge on clock to receive the read data
-	* `hb_addr` -sets to the desired address
-* Not exposed to user
-	* `hb_cs`    -sets to the value 0 to activate the selected slave device
-	* `hb_cs`    -sets value back to 1 to deactivate the slave device
-* As CFG class
-	* `latency` -Initial latency value to be applied before every transaction.
-	* `Burst_length` -specifies the total number of transfers in the burst transaction.
-	* `Burst_increment` -specifies the amount by which the address is incremented after each transfer in the burst
+#### Configuration Parameters:
+* `latency` -Initial latency value to be applied before every transaction.
+* `Burst_length` -specifies the total number of transfers in the burst transaction.
+* `Burst_increment` -specifies the amount by which the address is incremented after each transfer in the burst
 
 `read_data` and `write_data` perform read and write operations on the hyperbusmaster.
 ```bash
-await master_model.initialize() #for verification
+await h_mas.initialize() #for verification
      #read and write transactions
-     read_data = await master_model.read(0x1000,length,reg=False)  #read data from address 0x1000
      await master_model.write_data(0x1000, 0xabcdabcd,reg=False)  #write data 0xabcdabcd to address 0x1000
+     read_data = await master_model.read(0x1000,length,reg=False)  #read data from address 0x1000
 ```
-#### HyperBusAddressMap Reuse from axi
-This class manages the mapping between logical and physical addresses used by the HyperBus master.
+#### AddressSpace
+This class manages the mapping between logical and physical addresses used by the HyperBus master. AddressSpace is the core object for handling address spaces.
 ```bash
-class HyperbusAddressMap:
+class AddressSpace:
 #define mapping between logical and physical address       
-def _init_():
-        address_map = { }
-        def translate_logical_address(address):
+def _init_(self):
+   self.address_space = { }
+def translate_logical_address(address):
         return address_map[address]   #convert logical address to physical address
 ```
 
-#### Additional Signals:
+#### Additional Parameters:
 * read_data: Reads data from a specific address on the HyperBus.
 * write_data: Writes data to a specific address on the HyperBus.
 * burst_transfer: Performs a burst transfer of data on the HyperBus.
@@ -202,7 +169,7 @@ To use the module, import the class:
 ```bash
 from hyperbus_model import HyperbusSlave
 
-slave_model=HyperbusSlave(clk, hb_cs, hb_ca, hb_rw, hb_rd_data, hb_wr_data, memory)
+h_slv=HyperbusSlave(dut.clk, dut.rst, prefix, memory)
 ```
 
 The HyperbusSlave model defines a asyn function `handle_transaction` that waits for the rising edge on clock,
