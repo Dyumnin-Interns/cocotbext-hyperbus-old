@@ -72,7 +72,7 @@ class HyperbusMaster(BusDriver):
        
         
         
-     aasync def _perform_write(self, address, data):
+     async def _perform_write(self, address, data):
         try:
             self.bus.cs <= 0
             self.bus.address <= address
