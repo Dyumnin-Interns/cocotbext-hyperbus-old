@@ -6,9 +6,9 @@ from cocotb.triggers import RisingEdge, FallingEdge, ReadOnly, Timer, ReadWrite,
 
 class HyperbusSlave(BusDriver):
      _signals=['cs', 'rwds', 'dq', 'clk', 'memory']
-     _optional_signals=['clk_']
+     optional_signals=['clk']
 
-    def __init__(self, cs, rwds, dq, clk, memory):
+    def _init_(self, cs, rwds, dq, clk, memory):
       self.bus.cs=cs
       self.bus.rwds=rwds
       self.bus.dq=dq
@@ -19,11 +19,10 @@ class HyperbusSlave(BusDriver):
       self.rwds_mask = 0xFF
     
     async def driver_send(self, data):
-       await RisingEdge(self.clk)  
-  
-       self.bus.dq.value = data  # Driver data onto output signals
+       await RisingEdge(self.bus.clk)  
+       self.bus.dq.value = data  
    
-       self.bus.tx_complete.value = 1  # Example completion signal
+       
        
     def write(self, address, data):
       '''
@@ -55,10 +54,10 @@ class HyperbusSlave(BusDriver):
                 read_data[i] = 0
                 
 
-            # Apply RDWS mask 
+            
             read_data[i] &= self.rwds_mask
 
-            # Send data to output signals 
+            
             self.bus.dq.value = read_data[i]
            
         return read_data
@@ -84,16 +83,16 @@ class HyperbusSlave(BusDriver):
     async def handle_transaction(self):
         await RisingEdge(self.clk)
 
-        if self.bus.cs.value == 0:  # Chip select asserted
+        if self.bus.cs.value == 0:  
             command = await self.decode_command()
             if command == "write":
                 await self.write(address, data)
             elif command == "read":
                 data = await self.read(address, length)
             else:
-                # Handle unsupported commands
+               raise UnsupportedCommandError(f"Unsupported command: {command}")
 
-            self.bus.cs.value = 1  # Deassert chip select
+            self.bus.cs.value = 1  
 
     async def decode_command(self):
         '''
@@ -103,13 +102,5 @@ class HyperbusSlave(BusDriver):
         
         
    async def process_latency(self, latency):
-       '''
-       Implement logic to wait for required number of clock cycles based on latency
-       '''
-       wait_time = latency * self.clk.period  #calculate wait time
-
-   
-       await Timer(wait_time, units='ns')
-
-
-      
+       for _ in range(latency):
+        await RisingEdge(self.clk)
