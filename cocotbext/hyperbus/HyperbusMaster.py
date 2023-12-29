@@ -5,8 +5,8 @@ import random
 
 class HyperbusMaster(BusDriver):
     _signals=['cs', 'rwds', 'dq', 'clk']
-    _optional_signals=['clk_']
-    def __init__(self, cs, rwds, dq, clk):
+    optional_signals=['clk']
+    def _init_(self, cs, rwds, dq, clk):
         self.bus.cs=cs
         self.bus.rwds=rwds
         self.bus.dq=dq
@@ -15,20 +15,11 @@ class HyperbusMaster(BusDriver):
        
        
     async def driver_send(self, data):
-        
-        #start clock generation and checker tasks
+       
         self.generate_clk()  
         self.check_rwds_timing()  
-
         self.bus.cs.value = 0
-
-        
-        await self.tosv.is_high  # Ensure slave is ready
-
-        for bit in data:
-           self.bus.rwds.value == 0
-           self.bus.dq.value == bit
-           await RisingEdge(self.clk)  # Synchronize with clock
+        await RisingEdge(self.bus.clk)  
            
 
     async def generate_clk(self):
@@ -60,7 +51,7 @@ class HyperbusMaster(BusDriver):
 
       try:
         if burst:
-            burst_length = self._calc_burst(data)  # Use correct burst length calculation
+            burst_length = self._calc_burst(data)  
             for offset in range(burst_length):
                 await self._perform_write(address + offset, data[offset::burst_length])
         else:
@@ -72,7 +63,7 @@ class HyperbusMaster(BusDriver):
        
         
         
-     async def _perform_write(self, address, data):
+     aasync def _perform_write(self, address, data):
         try:
             self.bus.cs <= 0
             self.bus.address <= address
@@ -84,12 +75,11 @@ class HyperbusMaster(BusDriver):
             self.bus.cs <= 1
 
     async def _wait_for_ready(self):
-        # Placeholder for waiting until the slave is ready
-        await Timer(10, units='ns')
+       await Timer(10, units='ns')
     
     
     def _calc_burst(self, data):
-           burst_length_map = {
+        burst_length_map = {
             128: None,  # 00 for infinite burst
             64: 1,     # 01 for 64 bytes
             16: 2,     # 10 for 16 bytes
@@ -114,7 +104,7 @@ class HyperbusMaster(BusDriver):
             The read data as a byte string.
          '''
         
-         expected_data = b'\x01\x02\x03'  # Replace with your expected data
+         expected_data = b'\x01\x02\x03' 
          if read_data != expected_data:
             raise Exception(f"Data mismatch")
 
@@ -139,10 +129,10 @@ class HyperbusMaster(BusDriver):
         
  
 class AddressSpace(BusDriver):
-    def _init_(self): 
+    def init(self): 
        self.address_space = { }
    def translate_logical_address(self, address):
-        # Implement address translation logic here
+        
         return physical_address
    
    def get_constraints(self):
@@ -150,10 +140,10 @@ class AddressSpace(BusDriver):
         Returns a dictionary containing constraints related to the address space.
         '''
         constraints = {
-            "min_address": 0,  # Adjust as needed
-            "max_address": 0xFFFF,  # Adjust as needed
-            "memory_base_address": 0x1000,  # Example memory base address
-            "register_base_address": 0x0,  # Example register base address
+            "min_address": 0,  
+            "max_address": 0xFFFF,  
+            "memory_base_address": 0x1000,  
+            "register_base_address": 0x0,  
             "min_burst_length": 1,
             "max_burst_length": 128,
             "wrap_length": 1024,
@@ -163,7 +153,7 @@ class AddressSpace(BusDriver):
         
 
 class HyperbusTransactionGenerator(BusDriver):
-    def __init__(self):
+    def _init_(self):
         self.commands = [READ, WRITE]
         self.min_burst_length = 1  # Set minimum burst length constraint
         self.max_burst_length = 128  # Set maximum burst length constraint
@@ -179,8 +169,8 @@ class HyperbusTransactionGenerator(BusDriver):
         Generates a random transaction with command, address, data, and burst length.
         '''
         command = random.choice(self.commands)
-        address = random.randint(0, self.wrap_length - 1)  # Address within wrap length
-        data_length = random.randint(1, 128)  # Random number of bytes (adjust as needed)
+        address = random.randint(0, self.wrap_length - 1)  
+        data_length = random.randint(1, 128)  
         data = bytes([random.randint(0, 255) for _ in range(data_length)])
         
 
@@ -203,10 +193,4 @@ class HyperbusTransactionGenerator(BusDriver):
        '''
         Determines if the given address is a memory access.
         '''
-        return address >= 0x1000  
- 
- 
- 
- 
-        
-  
+        return address >= 0x1000
