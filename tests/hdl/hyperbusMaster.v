@@ -9,7 +9,13 @@ module hyperbusmaster(
     output reg [31:0] data_out
 );
 
-
+always @(posedge clk) begin
+        if (!rst_n) begin
+            cs <= 1;
+            rwds <= 0;
+        end 
+        
+    end
 
 
 
