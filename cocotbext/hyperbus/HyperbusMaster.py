@@ -64,8 +64,8 @@ class HyperbusClock():
       try:
             if burst:
                 burst_length = self._calc_burst(data)
-                for offset in range(0, len(data), burst_length):
-                    await self._perform_write(address + offset, data[offset:offset + burst_length])
+                for offset in range(0, len(data), burst_length):  #(0, 64, 64)->runs only once and offset->0
+                    await self._perform_write(address + offset, data[offset:offset + burst_length])  #(address+0, data[0:64] ->single burst write
             else:
                 await self._perform_write(address, data)
       except Exception as e:
@@ -86,7 +86,7 @@ class HyperbusClock():
        await Timer(10, units='ns')
     
     
-    def _calc_burst(self, data):
+    def _calc_burst(self, data): #considering 64-byte ->return 1
         burst_length_map = {
             128: None,  # 00 for infinite burst
             64: 1,     # 01 for 64 bytes
