@@ -13,7 +13,7 @@ class HyperbusMaster(BusDriver):
         super().__init__(self, name, **kwargs)
 
     async def _driver_send(self, data):
-        self.generate_clk()
+        self.generate_clk()  # This should be in a start_soon block check https://docs.cocotb.org/en/stable/coroutines.html#concurrent-execution
         self.check_rwds_timing()
         self.bus.cs.value = 0
         await RisingEdge(self.bus.clk)
@@ -36,7 +36,7 @@ class HyperbusMaster(BusDriver):
 
 
 @cocotb.coroutine
-class HyperbusClock:
+class HyperbusClock:  # JVS: Why define this class when https://docs.cocotb.org/en/stable/library_reference.html#clock exists?
     def __init__(self, signal, period, duty_cycle=60, units="ns"):
         self.signal = signal
         self.period = cocotb.utils.get_sim_steps(period, units)
@@ -69,7 +69,7 @@ class HyperbusClock:
                 for offset in range(0, len(data), burst_length):
                     # (address+0, data[0:64] ->single burst write
                     await self._perform_write(
-                        address + offset, data[offset : offset + burst_length]
+                        address + offset, data[offset: offset + burst_length]
                     )
             else:
                 await self._perform_write(address, data)
