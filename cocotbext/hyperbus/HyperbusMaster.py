@@ -1,7 +1,7 @@
 import cocotb
 from cocotb_bus.drivers import BusDriver
 from cocotb.triggers import RisingEdge, FallingEdge, ReadOnly, Timer, ReadWrite, Lock
-
+from cocotb.clock import Clock
 import random
 
 
@@ -13,10 +13,14 @@ class HyperbusMaster(BusDriver):
         super().__init__(self, name, **kwargs)
 
     async def _driver_send(self, data):
-        self.generate_clk()  # This should be in a start_soon block check https://docs.cocotb.org/en/stable/coroutines.html#concurrent-execution
-        self.check_rwds_timing()
+        clk = Clock(self.bus.clk, 10, units="ns")  # Creates a clock with 10 ns period
+        cocotb.start_soon(clk.start())
+        
+        cocotb.start_soon(self.check_rwds_timing())
+        
         self.bus.cs.value = 0
         await RisingEdge(self.bus.clk)
+      
         # data transmission logic
         for bit in data:
             self.bus.dq.value = bit
@@ -24,9 +28,6 @@ class HyperbusMaster(BusDriver):
 
         self.bus.cs.value = 1
 
-    async def generate_clk(self):
-        clk = HyperbusClock(self.bus.clk, 10, units="ns")
-        await clk.start()
 
     async def check_rwds_timing(self):
         """Checks if RWDS is asserted before DQ on each clock cycle."""
@@ -35,21 +36,6 @@ class HyperbusMaster(BusDriver):
             assert self.bus.rwds.value == 1 and self.bus.dq.value == 0
 
 
-@cocotb.coroutine
-class HyperbusClock:  # JVS: Why define this class when https://docs.cocotb.org/en/stable/library_reference.html#clock exists?
-    def __init__(self, signal, period, duty_cycle=60, units="ns"):
-        self.signal = signal
-        self.period = cocotb.utils.get_sim_steps(period, units)
-        self.duty_cycle = duty_cycle
-        self.high_time = int(self.period * duty_cycle / 100)
-        self.low_time = self.period - self.high_time
-
-    async def start(self):
-        while True:
-            self.signal <= 1
-            await Timer(self.high_time, units="ns")
-            self.signal <= 0
-            await Timer(self.low_time, units="ns")
 
     async def write(self, address, data, burst: bool = False):
         """
