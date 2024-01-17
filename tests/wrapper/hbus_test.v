@@ -11,7 +11,7 @@ hbus dut(
 	.clk(clk),
     .dq(dq),
     .rwds(rwds)
-
+	
 );
 
 initial begin
