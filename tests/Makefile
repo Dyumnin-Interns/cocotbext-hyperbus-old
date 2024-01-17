@@ -1,7 +1,7 @@
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
-VERILOG_SOURCES += $(PWD)/hdl/
-VERILOG_SOURCES += $(PWD)/wrappers/
+VERILOG_SOURCES += $(PWD)/hdl/hbus_mem.v
+#VERILOG_SOURCES += $(PWD)/wrappers/
 
 dut:
 	$(MAKE) sim MODULE= TOPLEVEL=
