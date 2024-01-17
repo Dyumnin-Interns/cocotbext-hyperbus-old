@@ -38,7 +38,7 @@ async def test_dut(dut):
     # Apply initial latency
     await hyperbus_master._wait_for_ready(latency)
 
-    # Test using len port
+    # Test 
     address = 0x1000
     data = b'This is a data string I am sending over hyperbus;'
     await hyperbus_slave.write(address, data, burst=True, burst_length=burst_length, burst_increment=burst_increment)
@@ -50,8 +50,7 @@ async def test_dut(dut):
     read_data = await hyperbus_master.read(address, len(data))
     print(f"Read Data: {read_data}")
 
-
-    # hyperbus operations
+  # hyperbus operations
     await hyperbus_master.initialize()  # for verification
     await hyperbus_master.write_data(0x1000, 0xabcdabcd, reg=False)  # write data 0xabcdabcd to address 0x1000
     read_data = await hyperbus_master.read(0x1000, len(data), reg=False)  # read data from address 0x1000
