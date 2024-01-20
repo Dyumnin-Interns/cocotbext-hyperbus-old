@@ -4,6 +4,8 @@ VERILOG_SOURCES += $(PWD)/hdl/hbus_mem.v
 VERILOG_SOURCES += $(PWD)/hdl/hbus_cntrl.v
 VERILOG_SOURCES += $(PWD)/wrapper/hbus_test.v
 
+COMPILE_ARGS += -I$(PWD)/tests/tests_simple.v
+
 dut:
 	$(MAKE) sim MODULE=h_test TOPLEVEL=hbus_test
 include $(shell cocotb-config --makefiles)/Makefile.sim
